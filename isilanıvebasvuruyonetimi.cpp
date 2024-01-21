@@ -5,11 +5,13 @@
 #include <string>
 using namespace std;
 void IsilanEkle();
+
 void IlanListeleme();
 void IlanSil();
 void BasvuruEkle();
 void BasvuruListele();
 void BasvuruSil();
+void BasvuruArama();
 
 struct Basvuru
 {
@@ -45,6 +47,7 @@ int main()
         cout << "|   4-Basvuru Ekleme     |" << endl;
         cout << "|   5-Basvuru Listele    |" << endl;
         cout << "|   6-Basvuru Sil        |" << endl;
+        cout << "|   7-Basvuru Arama      |" << endl;
         cout << "|------------------------|" << endl;
         char secim;
         cin >> secim;
@@ -78,6 +81,11 @@ int main()
         case '6':
         {
             BasvuruSil();
+            break;
+        }
+        case '7':
+        {
+            BasvuruArama();
             break;
         }
         }
@@ -393,4 +401,41 @@ void BasvuruSil()
         remove("Yedek.dat");
         cout << "\n Kayit Bulunamadi" << endl;
     }
+}
+
+void BasvuruArama()
+{
+    Basvuru basvuru;
+    ifstream oku("basvurular.dat", ios::binary | ios::app);
+
+    oku.seekg(0, ios::end);
+    int kayits = oku.tellg() / sizeof(basvuru);
+
+    cout << "Aranan Basvuruya Sahip Kisinin AD ve Soyadini giriniz:  " << endl;
+    char ad_soyad[80];
+    cin.ignore();
+    cin.getline(ad_soyad, sizeof(basvuru.ad_soyad));
+
+    if (kayits > 0)
+    {
+        for (int i = 0; i < kayits; i++)
+        {
+
+            oku.seekg(i * sizeof(basvuru));
+            oku.read((char *)&basvuru, sizeof(basvuru));
+
+            if (strcmp(basvuru.ad_soyad, ad_soyad) == 0)
+            {
+                cout << "Bulunan Basvuru Bilgileri: " << endl;
+                cout << "Basvuran  Adi ve Soyadi : " << basvuru.ad_soyad << endl;
+                cout << "Basvuran kisinin istedigi firma: " << basvuru.firma << endl;
+                cout << "Basvuran kisini istedigi pozisyon: " << basvuru.pozisyon << endl;
+                cout << "Basvuran kisini CV si: " << basvuru.CV << endl;
+            }
+        }
+    }
+    else
+        cout << "Kayit Bulunamadi..." << endl;
+
+    oku.close();
 }
